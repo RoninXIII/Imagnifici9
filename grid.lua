@@ -26,15 +26,17 @@ function grid.Grid()
   g._operations = {"+","-","*"}
 
   --[[Table della grilgia interna]]
-  g._grid = {{"","","","","",""},
-             {"","","","","",""},
-             {"","","","","",""},
-             {"","","","","",""},
-             {"","","","","",""},
-             {"","","","","",""}}
+  g._grid = {{"","+","","*","",21},
+             {"+","","-","","+",""},
+             {"","-","","*","",1},
+             {"*","","+","","+",""},
+             {"","+","","-","",3},
+             {15,"",8,"",13,""}}
 
   g.size_x = 5
   g.size_y = 5
+  g.axis_x = 90
+  g.axis_y = 90
  
 
   --[[DEFINIZIONE METODI ]]
@@ -289,7 +291,13 @@ function g:checkResult(x,y)
 
     if self:compute(self:get_column(y)) == result then return true
 
-    else return false
+    elseif x+1 == 6 and y+1 == 6 then 
+      local result1 = self._grid[x][y+1] 
+      local result2 = self._grid[x+1][y+1]
+      if self:compute(self:get_row(x)) == result1 and self:compute(self:get_column(y)) == result then
+        return true
+      end
+  else return false
 
     end
 
@@ -307,71 +315,47 @@ function g:solve(x,y)
         if (x+1 == 6 or y+1 == 6)  then
 
           if self:checkResult(x,y) then
-            if x+2 ~= nil then
+            if self._grid[x+2] ~= nil then
 
               if self:solve(x+2,1) then
                 return true
               end
-            elseif y+2 ~= nil then self:solve(x,y+2)
+            elseif self._grid[y+2] ~= nil then 
+              if self:solve(x,y+2) then return true end
+
             else return true 
             end
  
 
-          end
-
-        else self:solve(x,y+2)  
+          end  
+        elseif self:solve(x,y+2) then return true 
         end 
 
-      end
-    end
-  --[[
-      if self:isAllowed(x,y,number) then
+      end -- Fine if isAllowed
+    end -- Fine for
 
-        self._grid[x][y] = number
-
-        if type(self._grid[x+1][y]) == "number" or type(self._grid[x][y+1]) == "number" then
-
-          if self:checkResult(x,y) then
-            return true
-          else 
-            if number == 9 then
-              self._grid[x][y] = ''
-              return self:solve(x,y-2,1)
-            else return self:solve(x,y,number+1)  
-            end
-          end
-        else
-          if self._grid[x][y+2] ~= nil then return self:solve(x,y+2,number) 
-
-          elseif self._grid[x+2] ~= nil then return self:solve(x+2,1,1) end
-         
-
-        end
-
-      else  self:solve(x,y,number+1) 
-
-      end 
-  ]]
 end
 
   function g:printGrid(x,y)
   
-    love.graphics.rectangle("line", y*self.axis_y +70, x*self.axis_x -20, 90, 90)
+    love.graphics.rectangle("line", y*self.axis_y +70, x*self.axis_x -40, 90, 90)
    
     
     if self:isOdd(x) and self:isOdd(y)  then
 
-   love.graphics.print(self._grid[x][y],y*self.axis_y +90,x*self.axis_x-10) 
+   love.graphics.print(self._grid[x][y],y*self.axis_y +90,x*self.axis_x-30) 
   
 elseif self:isOdd(x) == false and self:isOdd(y) == false then   
 
-love.graphics.setColor(0.5,0.5,0.5)
-love.graphics.rectangle("fill", y*self.axis_y +70, x*self.axis_x -20, 90, 90)
+love.graphics.setColor(0.7,0.7,0.7)
+love.graphics.rectangle("fill", y*self.axis_y +70, x*self.axis_x -40, 90, 90)
 love.graphics.setColor(1,1,1)
 
+
+
 else   
-love.graphics.setColor(0.5,0,0)
-love.graphics.print(self._grid[x][y],y*self.axis_y +90,x*self.axis_x)
+love.graphics.setColor(0.7,0.7,0)
+love.graphics.print(self._grid[x][y],y*self.axis_y +75,x*self.axis_x-20)
 love.graphics.setColor(1,1,1)
 end
 
