@@ -1,9 +1,7 @@
 --[[
 require "grid"
 G = grid.Grid()
-
   Metodi pubblici
-
   get_cell(x, y)             Ritorna il dato nella cella con coordinata x,y.
   set_cell(x, y, obj)        Sets the cell's data to the given object.
   populate()                 Popola la griglia con operazioni e numeri casuali.
@@ -290,17 +288,14 @@ function g:checkResult(x,y)
     local result = self._grid[6][y]
 
     if self:compute(self:get_column(y)) == result then return true
-
-    elseif x+1 == 6 and y+1 == 6 then 
-      local result1 = self._grid[x][y+1] 
-      local result2 = self._grid[x+1][y+1]
-      if self:compute(self:get_row(x)) == result1 and self:compute(self:get_column(y)) == result then
-        return true
-      end
-  else return false
+    else return false
 
     end
-
+  else 
+    local result = self._grid[5][y]
+    if self:compute(self:get_row(5)) == result then return true
+    else return false
+    end  
   end
 
 end
@@ -323,7 +318,10 @@ function g:solve(x,y)
             elseif self._grid[y+2] ~= nil then 
               if self:solve(x,y+2) then return true end
 
-            else return true 
+            else
+              if self:checkResult(6,6) then
+                return true
+              end 
             end
  
 
@@ -333,6 +331,7 @@ function g:solve(x,y)
 
       end -- Fine if isAllowed
     end -- Fine for
+    self._grid[x][y] = ''
 
 end
 
